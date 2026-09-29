@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Produk & Titipan Stok</h2>
+<table id="tbl"><thead><tr><th>SKU</th><th>Produk</th><th>Penitip</th><th>Harga</th><th>Stok</th></tr></thead><tbody></tbody></table>
+<h3>Tambah Produk</h3>
+<form id="f">
+  <select name="penitip_id" id="penitip" required></select>
+  <input name="nama" placeholder="Nama produk" required>
+  <input name="sku" placeholder="SKU" required>
+  <input name="harga_jual" type="number" min="0" placeholder="Harga jual" required>
+  <button>Simpan</button>
+</form>
+<h3>Titip Stok</h3>
+<form id="t">
+  <select name="produk_id" id="produk" required></select>
+  <input name="qty" type="number" min="1" placeholder="Qty" required>
+  <input name="tanggal" type="date">
+  <button>Catat Titipan</button>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+async function load() {
+  const pen = await api("/api/penitip");
+  el("penitip").innerHTML = pen.map(x => `<option value="${x.id}">${x.nama}</option>`).join("");
+  const s = await api("/api/stok");
+  el("produk").innerHTML = s.map(x => `<option value="${x.id}">${x.sku} — ${x.nama} (stok ${x.stok})</option>`).join("");
+  el("tbl").querySelector("tbody").innerHTML = s.map(x =>
+    `<tr><td>${x.sku}</td><td>${x.nama}</td><td>${x.nama_penitip}</td>
+     <td>${rupiah(x.harga_jual)}</td><td><b>${x.stok}</b></td></tr>`).join("");
+}
+el("f").onsubmit = async e => {
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(e.target));
+  d.penitip_id = +d.penitip_id; d.harga_jual = +d.harga_jual;
+  await post("/api/produk", d); e.target.reset(); load();
+};
+el("t").onsubmit = async e => {
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(e.target));
+  d.produk_id = +d.produk_id; d.qty = +d.qty;
+  await post("/api/titipan", d); e.target.reset(); load();
+};
+load();
+</script>
+{% endblock %}

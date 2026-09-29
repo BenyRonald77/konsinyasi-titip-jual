@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Retur Barang Tak Laku</h2>
+<form id="f">
+  <select name="produk_id" id="produk" required></select>
+  <input name="qty" type="number" min="1" placeholder="Qty" required>
+  <input name="keterangan" placeholder="Keterangan">
+  <button>Catat Retur</button>
+</form>
+<h3>Riwayat Retur</h3>
+<table id="tbl"><thead><tr><th>Tanggal</th><th>Produk</th><th>Qty</th><th>Keterangan</th></tr></thead><tbody></tbody></table>
+{% endblock %}
+{% block scripts %}
+<script>
+async function load() {
+  const s = await api("/api/stok");
+  el("produk").innerHTML = s.map(x => `<option value="${x.id}">${x.sku} — ${x.nama} (stok ${x.stok})</option>`).join("");
+  const r = await api("/api/retur");
+  el("tbl").querySelector("tbody").innerHTML = r.map(x =>
+    `<tr><td>${x.tanggal}</td><td>${x.nama_produk}</td><td>${x.qty}</td><td>${x.keterangan || "-"}</td></tr>`).join("");
+}
+el("f").onsubmit = async e => {
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(e.target));
+  d.produk_id = +d.produk_id; d.qty = +d.qty;
+  const r = await post("/api/retur", d);
+  if (r.error) return alert(r.error);
+  e.target.reset(); load();
+};
+load();
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+<div id="ringkasan" class="cards"></div>
+<h3>Stok Menipis (≤ 5)</h3>
+<table id="stok"><thead><tr><th>SKU</th><th>Produk</th><th>Penitip</th><th>Stok</th></tr></thead><tbody></tbody></table>
+{% endblock %}
+{% block scripts %}
+<script>
+(async () => {
+  const bh = await api("/api/bagi-hasil");
+  el("ringkasan").innerHTML = `
+    <div class="card"><h4>Omzet ${bh.periode}</h4><p><b>${rupiah(bh.total_omzet)}</b></p></div>
+    <div class="card"><h4>Hak toko</h4><p><b>${rupiah(bh.total_hak_toko)}</b></p></div>
+    <div class="card"><h4>Hak penitip</h4><p><b>${rupiah(bh.total_hak_penitip)}</b></p></div>`;
+  const s = await api("/api/stok");
+  el("stok").querySelector("tbody").innerHTML =
+    s.filter(x => x.stok <= 5).map(x =>
+      `<tr><td>${x.sku}</td><td>${x.nama}</td><td>${x.nama_penitip}</td><td>${x.stok}</td></tr>`).join("")
+    || '<tr><td colspan="4">Semua stok aman.</td></tr>';
+})();
+</script>
+{% endblock %}
