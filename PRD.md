@@ -13,8 +13,8 @@ melebihi stok yang ada.
 
 ## Stack
 
-- Backend: Python + Flask, SQLite (stdlib `sqlite3`)
-- Frontend: HTML + vanilla JS + CSS murni
+- Backend: Next.js 14 (App Router API routes) + TypeScript + Prisma 5, SQLite
+- Frontend: Next.js + React + Tailwind CSS
 
 ## Model Data
 
@@ -39,8 +39,8 @@ melebihi stok yang ada.
 
 ## Tahap Pengerjaan
 
-- **F0 — Fondasi**: PRD, README, struktur, requirements, .gitignore.
-- **F1 — Database + API inti**: schema, seed, CRUD penitip & produk,
+- **F0 — Fondasi**: PRD, README, struktur, package.json, .gitignore.
+- **F1 — Database + API inti**: schema Prisma, seed, CRUD penitip & produk,
   pencatatan titipan, kasir penjualan dengan validasi stok.
 - **F2 — Bagi hasil & retur**: retur dengan validasi stok, laporan bagi
   hasil per periode, stok per produk/penitip.
@@ -48,10 +48,10 @@ melebihi stok yang ada.
 
 ## Kriteria Selesai
 
-- [ ] Jual melebihi stok ditolak; retur melebihi stok ditolak
-- [ ] Bagi hasil bulan berjalan benar per penitip
-- [ ] Perubahan harga tidak mengubah riwayat penjualan
-- [ ] `pip install -r requirements.txt && python app.py` langsung jalan
+- [x] Jual melebihi stok ditolak; retur melebihi stok ditolak
+- [x] Bagi hasil bulan berjalan benar per penitip
+- [x] Perubahan harga tidak mengubah riwayat penjualan
+- [x] `npm install && npx prisma db push && npm run seed && npm run dev` langsung jalan
 
 ## Non-tujuan
 

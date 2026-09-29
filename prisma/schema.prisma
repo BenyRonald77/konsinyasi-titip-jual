@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Penitip {
+  id         Int      @id @default(autoincrement())
+  nama       String
+  kontak     String?
+  persenToko Float    @default(20) @map("persen_toko")
+  produks    Produk[]
+
+  @@map("penitip")
+}
+
+model Produk {
+  id        Int            @id @default(autoincrement())
+  penitipId Int            @map("penitip_id")
+  nama      String
+  sku       String         @unique
+  hargaJual Int            @map("harga_jual")
+  penitip   Penitip        @relation(fields: [penitipId], references: [id])
+  titipans  Titipan[]
+  items     PenjualanItem[]
+  returs    Retur[]
+
+  @@map("produk")
+}
+
+model Titipan {
+  id       Int    @id @default(autoincrement())
+  produkId Int    @map("produk_id")
+  tanggal  String
+  qty      Int
+  produk   Produk @relation(fields: [produkId], references: [id])
+
+  @@map("titipan")
+}
+
+model Penjualan {
+  id      Int             @id @default(autoincrement())
+  tanggal String
+  catatan String          @default("")
+  items   PenjualanItem[]
+
+  @@map("penjualan")
+}
+
+model PenjualanItem {
+  id          Int       @id @default(autoincrement())
+  penjualanId Int       @map("penjualan_id")
+  produkId    Int       @map("produk_id")
+  qty         Int
+  hargaSatuan Int       @map("harga_satuan")
+  penjualan   Penjualan @relation(fields: [penjualanId], references: [id])
+  produk      Produk    @relation(fields: [produkId], references: [id])
+
+  @@map("penjualan_item")
+}
+
+model Retur {
+  id         Int    @id @default(autoincrement())
+  produkId   Int    @map("produk_id")
+  tanggal    String
+  qty        Int
+  keterangan String  @default("")
+  produk     Produk @relation(fields: [produkId], references: [id])
+
+  @@map("retur")
+}
